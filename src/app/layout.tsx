@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Github } from "lucide-react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,7 +36,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         cz-shortcut-listen="true"
       >
-        {children}
+        <div className="relative">
+          <a href={process.env.GITHUB_URL} className="absolute right-0 m-4 flex items-center gap-1">
+            <Github />
+            <span className="text-xs font-semibold">Wlad1slav</span>
+          </a>
+          {children}
+        </div>
       </body>
     </html>
   );
