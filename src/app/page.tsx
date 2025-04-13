@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/popover"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
+import { saveAs } from 'file-saver';
+import { imageFileToBase64 } from "@/lib/utils"
 
 interface Position {
   x: number
@@ -22,11 +24,16 @@ interface Position {
 
 interface ImageItem {
   id: string
-  src: string
+  src?: string
   position: Position
   isDragging: boolean
   loading?: boolean
+  base64: string;
 }
+
+const backgroundAssets = [
+  '/Political_Compass_standard_model.svg.png'
+];
 
 export default function AlignmentChart() {
   const [images, setImages] = useState<ImageItem[]>([])
@@ -37,6 +44,7 @@ export default function AlignmentChart() {
   const [imageSize, setImageSize] = useState(80) // Default size, will be updated based on chart width
   const [chartSize, setChartSize] = useState({ width: 0, height: 0 })
   const [isMobile, setIsMobile] = useState(false)
+  const [background, setBackground] = useState<string>()
 
   const [axis, setAxisNames] = useState({
     right: 'Right',
@@ -175,6 +183,7 @@ export default function AlignmentChart() {
         position: randomPosition,
         isDragging: false,
         loading: true,
+        base64: ''
       }
 
       setImages((prev) => [...prev, tempImage])
@@ -288,8 +297,10 @@ export default function AlignmentChart() {
           document.body.removeChild(analysisDiv)
         }
 
+        const base64 = await imageFileToBase64(objectUrl)
+
         // Update the image with the final URL
-        setImages((prev) => prev.map((img) => (img.id === tempImageId ? { ...img, src: objectUrl, loading: false } : img)))
+        setImages((prev) => prev.map((img) => (img.id === tempImageId ? { ...img, src: objectUrl, base64, loading: false } : img)))
       }
 
       // const file = e.currentTarget.files[0];
@@ -453,13 +464,108 @@ export default function AlignmentChart() {
     }
   }, [activeDragId, images, offset, imageSize])
 
+  const handleSave = () => {
+    const json = JSON.stringify(images.map(img => ({ base64: img.base64, id: img.id, isDragging: img.isDragging, position: img.position })), null, 2); // гарне форматування, опціонально
+    const blob = new Blob([json], { type: 'application/json;charset=utf-8' });
+    saveAs(blob, 'compass.json');
+  };
+
+  const handleImport = (e: FormEvent<HTMLInputElement>) => {
+    if (!e.currentTarget.files) return;
+
+    const file = e.currentTarget.files[0];
+
+    // file.type
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      if (evt.target && typeof evt.target.result == 'string') {
+        const parsed = JSON.parse(evt.target.result);
+        setImages(parsed);
+      }
+    };
+
+    reader.readAsText(file);
+  }
+
   return (
     <div
       className={`flex flex-col ${isMobile ? "justify-start pt-4 px-8" : "justify-center"} min-h-screen w-full overflow-hidden`}
       ref={containerRef}
     >
       <div className="flex flex-col items-center gap-8 w-full px-4">
-        <div className="relative w-full max-w-md flex items-center gap-2">
+        <div className="space-y-2">
+          <div className="relative w-full max-w-md flex items-center gap-2">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline">Axis</Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80">
+                <div className="grid gap-4">
+                  <div className="space-y-2">
+                    <h4 className="font-medium leading-none">Axis Labels</h4>
+                  </div>
+                  <div className="grid gap-2">
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <Label htmlFor="width">Top</Label>
+                      <Input
+                        defaultValue={axis.top}
+                        className="col-span-2 h-8"
+                        onInput={(e) => setAxisNames(prev => ({ ...prev, top: e.currentTarget ? e.currentTarget.value : '' }))}
+                      />
+                    </div>
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <Label htmlFor="maxWidth">Bottom</Label>
+                      <Input
+                        defaultValue={axis.bottom}
+                        className="col-span-2 h-8"
+                        onInput={(e) => setAxisNames(prev => ({ ...prev, bottom: e.currentTarget ? e.currentTarget.value : '' }))}
+                      />
+                    </div>
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <Label htmlFor="height">Right</Label>
+                      <Input
+                        defaultValue={axis.right}
+                        className="col-span-2 h-8"
+                        onInput={(e) => setAxisNames(prev => ({ ...prev, right: e.currentTarget ? e.currentTarget.value : '' }))}
+                      />
+                    </div>
+                    <div className="grid grid-cols-3 items-center gap-4">
+                      <Label htmlFor="maxHeight">Left</Label>
+                      <Input
+                        defaultValue={axis.left}
+                        className="col-span-2 h-8"
+                        onInput={(e) => setAxisNames(prev => ({ ...prev, left: e.currentTarget ? e.currentTarget.value : '' }))}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline">Background</Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80">
+                <div className="flex items-center flex-wrap gap-2">
+                  {backgroundAssets.map(bg => (
+                    <Image
+                      src={bg}
+                      alt=""
+                      id={`${bg}-select`}
+                      width={30}
+                      height={30}
+                      className={`border border-black/20 cursor-pointer transition hover:scale-95 ${background === bg ? 'outline-1 outline-black' : ''}`}
+                      onClick={() => setBackground(prev => bg === prev ? undefined : bg)}
+                    />
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
+            <Button onClick={handleSave}>Save</Button>
+            <Input type="file" accept=".json" placeholder="Import" onInput={handleImport} />
+          </div>
           <Input
             type="file"
             accept="image/*"
@@ -469,52 +575,6 @@ export default function AlignmentChart() {
               handleAddImage(e);
             }}
           />
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline">Axis</Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-80">
-              <div className="grid gap-4">
-                <div className="space-y-2">
-                  <h4 className="font-medium leading-none">Axis Labels</h4>
-                </div>
-                <div className="grid gap-2">
-                  <div className="grid grid-cols-3 items-center gap-4">
-                    <Label htmlFor="width">Top</Label>
-                    <Input
-                      defaultValue={axis.top}
-                      className="col-span-2 h-8"
-                      onInput={(e) => setAxisNames(prev => ({ ...prev, top: e.currentTarget ? e.currentTarget.value : '' }))}
-                    />
-                  </div>
-                  <div className="grid grid-cols-3 items-center gap-4">
-                    <Label htmlFor="maxWidth">Bottom</Label>
-                    <Input
-                      defaultValue={axis.bottom}
-                      className="col-span-2 h-8"
-                      onInput={(e) => setAxisNames(prev => ({ ...prev, bottom: e.currentTarget ? e.currentTarget.value : '' }))}
-                    />
-                  </div>
-                  <div className="grid grid-cols-3 items-center gap-4">
-                    <Label htmlFor="height">Right</Label>
-                    <Input
-                      defaultValue={axis.right}
-                      className="col-span-2 h-8"
-                      onInput={(e) => setAxisNames(prev => ({ ...prev, right: e.currentTarget ? e.currentTarget.value : '' }))}
-                    />
-                  </div>
-                  <div className="grid grid-cols-3 items-center gap-4">
-                    <Label htmlFor="maxHeight">Left</Label>
-                    <Input
-                      defaultValue={axis.left}
-                      className="col-span-2 h-8"
-                      onInput={(e) => setAxisNames(prev => ({ ...prev, left: e.currentTarget ? e.currentTarget.value : '' }))}
-                    />
-                  </div>
-                </div>
-              </div>
-            </PopoverContent>
-          </Popover>
         </div>
 
         <div className="relative">
@@ -570,7 +630,7 @@ export default function AlignmentChart() {
             >
               {/* Axes */}
               <div className="absolute top-0 left-0 w-full h-full">
-                <img src="/Political_Compass_standard_model.svg.png" className="absolute top-0 left-0 w-full h-full border-t-2 border-black" alt="" />
+                {background && <img src={background} className="absolute top-0 left-0 w-full h-full border-t-2 border-black" alt="" />}
                 <div className="absolute top-0 left-0 w-full h-full border-b-2 border-r-2 border-black" />
                 <div className="absolute top-1/2 left-0 w-full h-0 border-t-2 border-black" />
                 <div className="absolute top-0 left-1/2 w-0 h-full border-l-2 border-black" />
@@ -596,7 +656,7 @@ export default function AlignmentChart() {
                 >
                   <div className="relative w-full h-full rounded-md overflow-hidden bg-white">
                     <Image
-                      src={img.src || "/placeholder.svg"}
+                      src={img.src ?? img.base64}
                       alt={`X avatar`}
                       width={100}
                       height={100}
