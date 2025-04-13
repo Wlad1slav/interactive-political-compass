@@ -564,7 +564,7 @@ export default function AlignmentChart() {
               </PopoverContent>
             </Popover>
             <Button onClick={handleSave}>Save</Button>
-            <Input type="file" accept=".json" placeholder="Import" onInput={handleImport} />
+            <Input type="file" accept=".json" placeholder="Import" onInput={handleImport} className="bg-blue-200"/>
           </div>
           <Input
             type="file"
