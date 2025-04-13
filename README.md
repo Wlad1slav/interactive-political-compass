@@ -1,36 +1,26 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# interactive-political-compass
 
-## Getting Started
+Create interactive political compasses. To get started, follow the [link](https://interactive-political-compass.netlify.app/).
 
-First, run the development server:
+![image](https://github.com/user-attachments/assets/b198e817-0313-4848-8eb2-1a9d1daf4ab8)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Features 
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 🌄 Image Upload. Easily upload your own images (e.g. photos of politicians or other icons).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Batch‑upload support for adding multiple files at once and building complex compasses in seconds.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🔄 JSON Export & Import
+Save your compass layouts as JSON files for later editing or sharing.
 
-## Learn More
+Import existing JSON compass files to review or modify previously saved designs.
 
-To learn more about Next.js, take a look at the following resources:
+### ⚙️ Axis Label Editing
+Fully customize axis labels (e.g. Authoritarian, Libertarian, Left, Right) with your own text.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Define custom labels for specialized scenarios or niche analyses.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 💾 One‑Click Saving
+Save all your settings instantly with a single click.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Automatic format support ensures your work is preserved exactly as designed.
