@@ -68,26 +68,6 @@ export default function AlignmentChart() {
     }
   }, [])
 
-  // Prevent scrolling on mobile
-  useEffect(() => {
-    const handleTouchMove = (e: TouchEvent) => {
-      // Only prevent default if we're not in an input field
-      if (e.target instanceof HTMLElement && e.target.tagName !== "INPUT" && !e.target.closest(".scrollable")) {
-        e.preventDefault()
-      }
-    }
-
-    document.addEventListener("touchmove", handleTouchMove, { passive: false })
-
-    // Set body overflow to hidden
-    document.body.style.overflow = "hidden"
-
-    return () => {
-      document.removeEventListener("touchmove", handleTouchMove)
-      document.body.style.overflow = ""
-    }
-  }, [])
-
   // Update chart size to fit the screen
   useEffect(() => {
     const updateChartSize = () => {
@@ -493,7 +473,7 @@ export default function AlignmentChart() {
       className={`flex flex-col ${isMobile ? "justify-start pt-4 px-8" : "justify-center"} min-h-screen w-full overflow-hidden`}
       ref={containerRef}
     >
-      <div className="flex flex-col items-center gap-8 w-full px-4">
+      <div className="flex flex-col items-center gap-8 w-full px-4 min-h-[120vh] pt-4">
         <div className="space-y-2">
           <div className="relative w-full max-w-md flex items-center gap-2">
             <Popover>
