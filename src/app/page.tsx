@@ -474,87 +474,96 @@ export default function AlignmentChart() {
       ref={containerRef}
     >
       <div className="flex flex-col items-center gap-8 w-full px-4 min-h-[120vh] pt-4">
-        <div className="space-y-2">
-          <div className="relative w-full max-w-md flex items-center gap-2">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline">Axis</Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80">
-                <div className="grid gap-4">
-                  <div className="space-y-2">
-                    <h4 className="font-medium leading-none">Axis Labels</h4>
+        <div className="space-y-5 md:space-y-2">
+          <div className="relative w-full max-w-md flex flex-col md:flex-row md:items-center gap-2 justify-between">
+            <div className="flex w-full md:items-center gap-2 flex-col md:flex-row">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline">Axis</Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80">
+                  <div className="grid gap-4">
+                    <div className="space-y-2">
+                      <h4 className="font-medium leading-none">Axis Labels</h4>
+                    </div>
+                    <div className="grid gap-2">
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Label htmlFor="width">Top</Label>
+                        <Input
+                          defaultValue={axis.top}
+                          className="col-span-2 h-8"
+                          onInput={(e) => setAxisNames(prev => ({ ...prev, top: e.currentTarget ? e.currentTarget.value : '' }))}
+                        />
+                      </div>
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Label htmlFor="maxWidth">Bottom</Label>
+                        <Input
+                          defaultValue={axis.bottom}
+                          className="col-span-2 h-8"
+                          onInput={(e) => setAxisNames(prev => ({ ...prev, bottom: e.currentTarget ? e.currentTarget.value : '' }))}
+                        />
+                      </div>
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Label htmlFor="height">Right</Label>
+                        <Input
+                          defaultValue={axis.right}
+                          className="col-span-2 h-8"
+                          onInput={(e) => setAxisNames(prev => ({ ...prev, right: e.currentTarget ? e.currentTarget.value : '' }))}
+                        />
+                      </div>
+                      <div className="grid grid-cols-3 items-center gap-4">
+                        <Label htmlFor="maxHeight">Left</Label>
+                        <Input
+                          defaultValue={axis.left}
+                          className="col-span-2 h-8"
+                          onInput={(e) => setAxisNames(prev => ({ ...prev, left: e.currentTarget ? e.currentTarget.value : '' }))}
+                        />
+                      </div>
+                    </div>
                   </div>
-                  <div className="grid gap-2">
-                    <div className="grid grid-cols-3 items-center gap-4">
-                      <Label htmlFor="width">Top</Label>
-                      <Input
-                        defaultValue={axis.top}
-                        className="col-span-2 h-8"
-                        onInput={(e) => setAxisNames(prev => ({ ...prev, top: e.currentTarget ? e.currentTarget.value : '' }))}
-                      />
-                    </div>
-                    <div className="grid grid-cols-3 items-center gap-4">
-                      <Label htmlFor="maxWidth">Bottom</Label>
-                      <Input
-                        defaultValue={axis.bottom}
-                        className="col-span-2 h-8"
-                        onInput={(e) => setAxisNames(prev => ({ ...prev, bottom: e.currentTarget ? e.currentTarget.value : '' }))}
-                      />
-                    </div>
-                    <div className="grid grid-cols-3 items-center gap-4">
-                      <Label htmlFor="height">Right</Label>
-                      <Input
-                        defaultValue={axis.right}
-                        className="col-span-2 h-8"
-                        onInput={(e) => setAxisNames(prev => ({ ...prev, right: e.currentTarget ? e.currentTarget.value : '' }))}
-                      />
-                    </div>
-                    <div className="grid grid-cols-3 items-center gap-4">
-                      <Label htmlFor="maxHeight">Left</Label>
-                      <Input
-                        defaultValue={axis.left}
-                        className="col-span-2 h-8"
-                        onInput={(e) => setAxisNames(prev => ({ ...prev, left: e.currentTarget ? e.currentTarget.value : '' }))}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </PopoverContent>
-            </Popover>
+                </PopoverContent>
+              </Popover>
 
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button variant="outline">Background</Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-80">
-                <div className="flex items-center flex-wrap gap-2">
-                  {backgroundAssets.map(bg => (
-                    <Image
-                      src={bg}
-                      alt=""
-                      id={`${bg}-select`}
-                      width={30}
-                      height={30}
-                      className={`border border-black/20 cursor-pointer transition hover:scale-95 ${background === bg ? 'outline-1 outline-black' : ''}`}
-                      onClick={() => setBackground(prev => bg === prev ? undefined : bg)}
-                    />
-                  ))}
-                </div>
-              </PopoverContent>
-            </Popover>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline">Background</Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-80">
+                  <div className="flex items-center flex-wrap gap-2">
+                    {backgroundAssets.map(bg => (
+                      <Image
+                        src={bg}
+                        alt=""
+                        id={`${bg}-select`}
+                        width={30}
+                        height={30}
+                        className={`border border-black/20 cursor-pointer transition hover:scale-95 ${background === bg ? 'outline-1 outline-black' : ''}`}
+                        onClick={() => setBackground(prev => bg === prev ? undefined : bg)}
+                      />
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
             <Button onClick={handleSave}>Save</Button>
-            <Input type="file" accept=".json" placeholder="Import" onInput={handleImport} className="bg-blue-200"/>
           </div>
-          <Input
-            type="file"
-            accept="image/*"
-            multiple
-            onInput={(e) => {
-              e.preventDefault();
-              handleAddImage(e);
-            }}
-          />
+          <div className="flex flex-col md:flex-row items-center gap-2">
+            <Label htmlFor="import" className="w-full">Import (.json)</Label>
+            <Input type="file" accept=".json" placeholder="Import" id="import" onInput={handleImport} />
+          </div>
+          <div className="flex flex-col md:flex-row items-center gap-2">
+            <Label htmlFor="import" id="add-image" className="w-full">Add image (image/*)</Label>
+            <Input
+              id="add-image"
+              type="file"
+              accept="image/*"
+              multiple
+              onInput={(e) => {
+                e.preventDefault();
+                handleAddImage(e);
+              }}
+            />
+          </div>
         </div>
 
         <div className="relative">
@@ -573,21 +582,23 @@ export default function AlignmentChart() {
           </div>
 
           {/* Multi-Axis Labels */}
-          <div className="absolute top-1/4 left-1/4 md:text-lg text-sm z-5 text-center opacity-35">
-            <p>{axis.top}</p>
-            <p>{axis.left}</p>
-          </div>
-          <div className="absolute top-1/4 right-1/4 md:text-lg text-sm z-5 text-center opacity-35">
-            <p>{axis.top}</p>
-            <p>{axis.right}</p>
-          </div>
-          <div className="absolute bottom-1/4 left-1/4 md:text-lg text-sm z-5 text-center opacity-35">
-            <p>{axis.bottom}</p>
-            <p>{axis.left}</p>
-          </div>
-          <div className="absolute bottom-1/4 right-1/4 md:text-lg text-sm z-5 text-center opacity-35">
-            <p>{axis.bottom}</p>
-            <p>{axis.right}</p>
+          <div className="hidden md:block">
+            <div className="absolute top-1/4 left-1/4 md:text-lg text-sm z-5 text-center opacity-35">
+              <p>{axis.top}</p>
+              <p>{axis.left}</p>
+            </div>
+            <div className="absolute top-1/4 right-1/4 md:text-lg text-sm z-5 text-center opacity-35">
+              <p>{axis.top}</p>
+              <p>{axis.right}</p>
+            </div>
+            <div className="absolute bottom-1/4 left-1/4 md:text-lg text-sm z-5 text-center opacity-35">
+              <p>{axis.bottom}</p>
+              <p>{axis.left}</p>
+            </div>
+            <div className="absolute bottom-1/4 right-1/4 md:text-lg text-sm z-5 text-center opacity-35">
+              <p>{axis.bottom}</p>
+              <p>{axis.right}</p>
+            </div>
           </div>
 
           <Card
